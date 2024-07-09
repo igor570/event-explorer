@@ -4,10 +4,13 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/igor570/eventexplorer/db"
 	"github.com/igor570/eventexplorer/models"
 )
 
 func main() {
+	db.InitDB()
+
 	app := gin.Default()
 
 	app.GET("/events", getEvents)

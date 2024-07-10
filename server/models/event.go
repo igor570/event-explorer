@@ -46,6 +46,25 @@ func (e *Event) Save() error {
 	return err
 }
 
+func (e *Event) Update() error {
+	query := `
+	UPDATE events
+	SET user_id = ?, name = ?, description = ?, location = ?, dateTime = ?
+	WHERE id = ?
+	`
+	val, err := db.Database.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer val.Close()
+
+	_, err = val.Exec(e.UserID, e.Name, e.Description, e.Location, e.DateTime, e.ID)
+
+	return err
+}
+
 func GetAllEvents() ([]Event, error) {
 	// Get all events from DB
 	query := `SELECT id, user_id, name, description, location, dateTime FROM events`

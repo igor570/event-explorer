@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/igor570/eventexplorer/db"
+	"github.com/igor570/eventexplorer/utils"
 )
 
 type User struct {
@@ -25,7 +26,13 @@ func (u *User) Save() error {
 
 	defer val.Close() //defer execution until end
 
-	result, err := val.Exec(u.Email, u.Password)
+	hashedPassword, err := utils.HashPassword(u.Password)
+
+	if err != nil {
+		return err
+	}
+
+	result, err := val.Exec(u.Email, hashedPassword)
 
 	if err != nil {
 		return err

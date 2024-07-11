@@ -12,6 +12,6 @@ func RegisterRoutes(app *gin.Engine) {
 	app.DELETE("/events/:id", deleteEvent)
 
 	//Authentication
-	app.POST("/signup")
+	app.POST("/signup", signUp)
 
 }

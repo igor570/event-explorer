@@ -1,14 +1,16 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/igor570/eventexplorer/db"
 	"github.com/igor570/eventexplorer/utils"
 )
 
 type User struct {
 	ID       int64
-	Email    string `binding:"required"`
-	Password string `binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (u *User) Save() error {
@@ -48,4 +50,24 @@ func (u *User) Save() error {
 
 	return err
 
+}
+
+func (u *User) ValidateCredentials() error {
+	query := `SELECT password FROM users WHERE email = ?`
+	row := db.Database.QueryRow(query, u.Email) //find the row of specific email
+
+	var retrievedPassword string //storing the password sent from req.body
+	err := row.Scan(&retrievedPassword)
+
+	if err != nil {
+		return err
+	}
+
+	isPasswordValid := utils.ValidatePassword(u.Password, retrievedPassword) //compare structs password to retreived password
+
+	if !isPasswordValid {
+		return errors.New("invalid credentials")
+	}
+
+	return nil
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/igor570/eventexplorer/models"
+	"github.com/igor570/eventexplorer/utils"
 )
 
 func signUp(context *gin.Context) {
@@ -43,6 +44,13 @@ func login(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"Message": "Login successful!"})
+	token, err := utils.CreateToken(user.Email, user.ID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"Message": "Failed to get token for user"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"Message": "Login successful!", "JWT Token": token})
 
 }

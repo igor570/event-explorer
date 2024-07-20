@@ -37,7 +37,6 @@ func getEventById(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
-
 	//verify if request has JWT token
 	token := context.Request.Header.Get("Authorization") //check if jwt token exists on request headers
 
@@ -46,7 +45,7 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
-	err := utils.VerifyToken(token)
+	userId, err := utils.VerifyToken(token)
 
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, gin.H{"Message": "token failed verification"})
@@ -61,6 +60,8 @@ func createEvent(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"Message": "Could not parse event data", "error": err.Error()})
 		return
 	}
+
+	event.UserID = userId
 
 	err = event.Save()
 

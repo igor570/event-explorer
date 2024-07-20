@@ -19,7 +19,7 @@ func CreateToken(email string, userId int64) (string, error) {
 	return token.SignedString([]byte(secretKey))
 }
 
-func VerifyToken(token string) error {
+func VerifyToken(token string) (int64, error) {
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok { //checking type signing method of token
 			return nil, errors.New("unexpected signing method")
@@ -28,30 +28,28 @@ func VerifyToken(token string) error {
 	})
 
 	if err != nil {
-		return errors.New("could not parse the token")
+		return 0, errors.New("could not parse the token")
 	}
 
 	tokenIsValid := parsedToken.Valid
 
 	if !tokenIsValid {
-		return errors.New("invalid token")
+		return 0, errors.New("invalid token")
 	}
 
-	/*
-		//optional valdiation of properties in the token: email and user id
+	//optional valdiation of properties in the token: email and user id
 
-		claims, ok := parsedToken.Claims.(jwt.MapClaims) //checking the type of parsedToken
+	claims, ok := parsedToken.Claims.(jwt.MapClaims) //checking the type of parsedToken
 
-		if !ok {
-			return errors.New("Invalid token claims")
-		}
+	if !ok {
+		return 0, errors.New("invalid token claims")
+	}
 
-		//accessing the data in a map
-		email := claims["email"].(string)
-		userId := claims["userId"].(int64)
+	//accessing the data in a map
+	//pulling out userId from header params
+	//enforce to be int64
+	userId := int64(claims["userId"].(float64))
 
-	*/
-
-	return nil
+	return userId, nil
 
 }

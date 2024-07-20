@@ -7,8 +7,8 @@ import (
 )
 
 type Event struct {
-	ID          int64     `json:"id"`
-	UserID      int       `json:"user_id" binding:"required"`
+	ID          int64
+	UserID      int64
 	Name        string    `json:"name" binding:"required"`
 	Description string    `json:"description" binding:"required"`
 	Location    string    `json:"location" binding:"required"`

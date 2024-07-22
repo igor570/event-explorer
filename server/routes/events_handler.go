@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/igor570/eventexplorer/models"
-	"github.com/igor570/eventexplorer/utils"
 )
 
 func getEvents(context *gin.Context) {
@@ -37,29 +36,17 @@ func getEventById(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
-	//verify if request has JWT token
-	token := context.Request.Header.Get("Authorization") //check if jwt token exists on request headers
-
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{"Message": "Could not find Authorization token on request"})
-		return
-	}
-
-	userId, err := utils.VerifyToken(token)
-
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"Message": "token failed verification"})
-		return
-	}
 
 	//pulls params from json body and add to new event struct
 	var event models.Event
-	err = context.ShouldBindJSON(&event)
+	err := context.ShouldBindJSON(&event)
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"Message": "Could not parse event data", "error": err.Error()})
 		return
 	}
+
+	userId := context.GetInt64("userId") //pulling value out of context - set in auth.go
 
 	event.UserID = userId
 

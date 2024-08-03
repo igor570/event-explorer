@@ -3,16 +3,21 @@ import { UserFormSchema, UserFormValues } from "../../lib/schema.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { UserFormFooter } from "./UserFormFooter.tsx";
+import { useCreateUser } from "../../lib/hooks.ts";
 
 export const UserForm = () => {
   const { register, handleSubmit } = useForm<UserFormValues>({
     resolver: zodResolver(UserFormSchema),
   });
   const [isLogin, setIsLogin] = useState<boolean>(false);
+  const mutation = useCreateUser();
 
   const onSubmit = (data: UserFormValues) => {
+    const { email, password } = data;
     console.log(data);
+    mutation.mutate({ email, password });
   };
+
   return (
     <form
       className="flex flex-col gap-y-8 items-center w-full"

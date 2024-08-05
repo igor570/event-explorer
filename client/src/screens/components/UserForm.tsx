@@ -3,19 +3,30 @@ import { UserFormSchema, UserFormValues } from "../../lib/schema.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { UserFormFooter } from "./UserFormFooter.tsx";
-import { useCreateUser } from "../../lib/hooks.ts";
+import { useCreateUser, useLoginUser } from "../../lib/hooks.ts";
+import { useNavigate } from "react-router-dom";
 
 export const UserForm = () => {
+  const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const userCreateMutation = useCreateUser();
+  const loginUserMutation = useLoginUser();
   const { register, handleSubmit } = useForm<UserFormValues>({
     resolver: zodResolver(UserFormSchema),
   });
-  const [isLogin, setIsLogin] = useState<boolean>(false);
-  const mutation = useCreateUser();
 
   const onSubmit = (data: UserFormValues) => {
     const { email, password } = data;
-    console.log(data);
-    mutation.mutate({ email, password });
+
+    if (!isLogin) {
+      userCreateMutation.mutate({ email, password });
+      setIsLogin(true);
+    }
+
+    if (isLogin) {
+      loginUserMutation.mutate({ email, password });
+      navigate("/");
+    }
   };
 
   return (

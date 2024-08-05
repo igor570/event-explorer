@@ -7,7 +7,7 @@ export const UserFormFooter = ({
 }) => {
   return (
     <>
-      {isLogin ? (
+      {!isLogin ? (
         <small className="text-white text-center">
           Already have an account?
           <span

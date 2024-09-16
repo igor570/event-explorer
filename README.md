@@ -10,5 +10,6 @@ Users can create login and sign up to the events application, while also creatin
 - 🔒 Supports authentication with JWT
 - 🔖 Password hashing with Bcrypt
 - 💿 Uses SQLite for DB solution
+- 🐳 Dockerized for portability
 
  
